@@ -19,7 +19,7 @@ See the file LICENSE for details.
 #include "rtc.h"
 #include "kernelcore.h"
 #include "disk.h"
-
+#include "iso.h"
 /*
 This is the C initialization point of the kernel.
 By the time we reach this point, we are in protected mode,
@@ -52,6 +52,19 @@ int kernel_main() {
     //change text color to white after bootup
     console_set_fgcolor(255, 255, 255);
 
+    struct iso_file *fp = iso_fopen("/DIR1/DIR1_A/TEST1_A.TXT");
+    char c[2];
+    if(fp){
+    int result = iso_fread(c, 1, 1, fp);
+    while (c[0] != 4 && result) {
+        c[2] = 0;
+        console_printf("%s", c);        
+        result = iso_fread(c, 1, 1, fp);
+    }
+
+    iso_fclose(fp);
+    }
+    else { console_printf("Unable to open file\n"); }
     while (1) {
         keyboard_read_str();
     }
