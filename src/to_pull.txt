@@ -1,0 +1,7 @@
+Create new branch
+Implement feature with regular commits
+In feature branch
+    git fetch upstream
+    git merge upstream/master
+    git push
+Then create pull request from feature branch to NunyaOS
