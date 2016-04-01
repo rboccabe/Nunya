@@ -73,6 +73,7 @@ void cmd_line_attempt(const char *line) {
 
 void cmd_line_run_proc(char *proc_path) {
     // Load process data
+    console_printf("\f");
     struct iso_dir *root_dir = iso_dopen("/", 3);
     struct iso_file *proc_file = iso_fopen(proc_path, root_dir->ata_unit);
     uint8_t *process_data = kmalloc(proc_file->data_length);

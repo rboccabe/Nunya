@@ -8,6 +8,8 @@ int start() {
 #include "syscall.h"
 
 int main() {
+    create_window(20, 20, 400, 400);
+
     //start with root permissions, but only allow secondary ata units
     add_fs_allow("/2/", 1);
     add_fs_allow("/3/", 1);
@@ -16,29 +18,29 @@ int main() {
     //open file
     int fd = open("/3/GETTYSBU.TXT", "r");
 
-    //testcall on fd, should be 0
-    testcall(fd);
-
     int bytes_read;
-    char buffer[27];
+    char buffer[28];
 
     //perform read
     bytes_read = read(buffer, 27, fd);
-    int i = 0;
-    while (i < 27) {
-        testcall(buffer[i]);
-        i++;
-    }
-    close(fd);
+    buffer[27] = '\0';
+    struct graphics_color fgcolor = {255,0,0};
+    struct graphics_color bgcolor = {0,0,0};
+    draw_string(0, 0, buffer, &fgcolor, &bgcolor);
 
-    //Just something to easily identify the gap by
-    testcall(-40);
+    close(fd);
 
     //Remove allowances
     remove_fs_allow("/3/");
     fd = open("/3/GETTYSBU.TXT", "r");
+    draw_string(0, 12, "Access to /3/ removed", &fgcolor, &bgcolor);
 
     //-2 means no success on open, missing allowance
-    testcall(fd);
+    
+    if (fd < 0) {
+        int new_fd = fd * -1;
+        draw_string(0, 24, "Error on file open: ", &fgcolor, &bgcolor);
+        draw_char(0, 36, new_fd + 48, &fgcolor, &bgcolor);
+    }
     return 0;
 }
