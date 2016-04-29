@@ -9,6 +9,7 @@ See the file LICENSE for details.
 #include "iso.h"
 #include "memorylayout.h" // PROCESS_ENTRY_POINT
 #include "permissions_capabilities.h"
+#include "fs.h"
 
 int32_t sys_exit(uint32_t code) {
     process_exit((int32_t)code);
@@ -59,6 +60,8 @@ int32_t sys_run(const char *process_path, const uint32_t permissions_identifier,
 
     // Create a new process(page, page)
     struct process *child_proc = process_create(PAGE_SIZE, PAGE_SIZE);
+    console_printf("In process create: What the child process's allowances are:\n");
+    fs_print_allowances();
 
     if (child_proc <= 0) {
         // free the intermediary memory we used
@@ -70,6 +73,8 @@ int32_t sys_run(const char *process_path, const uint32_t permissions_identifier,
     // incorporate the permissions
     struct process_permissions *child_permissions = permissions_from_identifier(permissions_identifier);
     child_proc->permissions = child_permissions;
+
+    fs_copy_allowances_list(&(child_proc->fs_allowances_list), &(child_proc->permissions->fs_allowances));
 
 
     child_proc->parent = parent; // store the child's parent

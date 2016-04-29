@@ -85,6 +85,12 @@ int32_t fs_write(const char *src, uint32_t bytes,  uint32_t fd);
 void fs_init_security(struct process *p);
 
 /**
+ * @param path
+ * @return
+ */
+int32_t fs_security_check(const char *path);
+
+/**
  * @brief Copies a list of fs_allowances
  * @details Allocates new space for each node and copies each node element for
  * element
@@ -107,5 +113,7 @@ void fs_free_allowances_list(struct list *to_free);
  * @details Initialize each fs_agnostic file to reflect an unopened file
  */
 void fs_sys_init_open_file_table();
+
+void fs_print_allowances();
 
 #endif

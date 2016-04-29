@@ -21,6 +21,7 @@ See the file LICENSE for details.
 #include "kernelcore.h"
 #include "cmd_line.h"
 #include "disk.h"
+#include "fs.h"
 
 /*
 This is the C initialization point of the kernel.
@@ -49,6 +50,8 @@ int kernel_main() {
 
     mouse_init();
     ata_init();
+
+    fs_print_allowances();
 
     console_printf("\nNUNYA READY:\n");
 
