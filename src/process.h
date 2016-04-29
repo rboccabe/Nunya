@@ -46,7 +46,6 @@ struct process {
     struct list children;
     int number_of_pages_using;
     struct process_permissions *permissions;
-    struct process_files *files;
     struct list fs_allowances_list;
     struct window *window;
 };

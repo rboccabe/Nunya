@@ -45,6 +45,19 @@ void process_init() {
     initial_permissions->offset_x = 0;
     initial_permissions->offset_y = 0;
 
+    struct fs_allowance *n = kmalloc(sizeof(*n));
+    strcpy(n->path, "/");
+    n->do_allow_below = 1;
+    struct list l = LIST_INIT;
+    list_push_head(&l, (struct list_node*)n);
+    struct fs_allowance *m = kmalloc(sizeof(*m));
+    strcpy(m->path, "/3/");
+    m->do_allow_below = 1;
+    list_push_head(&l, (struct list_node*)m);
+    initial_permissions->fs_allowances = l;
+
+    fs_copy_allowances_list(&(current->fs_allowances_list), &l);
+
     // todo: the rest of the permissions
 
     console_printf("total pages: %d\n", memory_pages_total());

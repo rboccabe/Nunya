@@ -15,7 +15,7 @@ WINDOW_OBJS = window.o graphics.o syscall_handler_window.o window_manager.o
 PROCESS_OBJS = syscall_handler_process.o syscall_handler_permissions.o process.o permissions_capabilities.o
 CLOCK_OBJS = syscall_handler_clock.o syscall_handler_rtc.o
 
-BINARIES = bin/test_userproc_even.nun bin/test_window.nun bin/test_clock.nun
+BINARIES = bin/test_userproc_even.nun bin/test_window.nun bin/test_clock.nun bin/test_fs_hierarchy_containment.nun
 
 LIB_INCLUDE_PATH = ./include
 
@@ -51,7 +51,11 @@ kernel: ${OBJECTS}
 	gcc -Wall -S -ffreestanding -m32 -march=i386 -I ${LIB_INCLUDE_PATH} $< -o $@
 
 files.iso: ${BINARIES}
-	mv $^ ../files/bin/ && genisoimage -o ../files.iso ../files/
+	mv $^ ../files/bin/ 
+	mkdir ../files/usr
+	mkdir ../files/usr/Jesse ../files/usr/Ryan ../files/usr/Zach
+	echo "Current users are Jesse, Ryan, and Zach" > ../files/usr/users.txt
+	genisoimage -o ../files.iso ../files/
 
 bin/%.nun: bin/%.o
 	ld ${KERNEL_LDFLAGS} -Ttext 0x80000000 -s --oformat binary $< syscall.o -o $@
@@ -60,4 +64,5 @@ bin/%.o: bin/%.c
 	gcc ${KERNEL_CCFLAGS} -I ${LIB_INCLUDE_PATH} $< -o $@
 
 clean:
-	rm -rf nunya.iso nunya.img bootblock kernel *.o ../files.iso *.nun
+	rm -rf nunya.iso nunya.img bootblock kernel *.o ../files.iso *.nun ../files/usr/*
+	rmdir ../files/usr

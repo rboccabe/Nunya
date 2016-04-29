@@ -10,6 +10,7 @@ See the file LICENSE for details.
 #include "permissions_capabilities.h"
 #include "console.h"
 #include "fs.h"
+#include "process.h"
 
 #define MAX_NUMBER_OF_PERMISSIONS 169 // temporary, for now they'll be statically allocated
 #define DEFAULT_FRACTION_OF_MEMORY 3
@@ -101,8 +102,12 @@ uint32_t create_permissions_capability() {
     new_capability->offset_x = 0;
     new_capability->offset_y = 0;
 
-    struct list l = LIST_INIT;
-    new_capability->fs_allowances = l;
+//    struct list l = LIST_INIT;
+//    new_capability->fs_allowances = l;
+//    new_capability->fs_allowances = current->fs_allowances_list;
+    fs_copy_allowances_list(&(new_capability->fs_allowances), &(current->fs_allowances_list));
+    console_printf("The allowances to be copied:\n");
+    fs_print_allowances();
 
     return identifier;
 }

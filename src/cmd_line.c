@@ -12,6 +12,8 @@ See the file LICENSE for details.
 #include "window.h"
 #include "graphics.h"
 #include "syscall.h"
+#include "fs.h"
+#include "permissions_capabilities.h"
 
 #define KEYBOARD_BUFFER_SIZE 256
 
@@ -65,6 +67,15 @@ void cmd_line_attempt(const char *line) {
         console_printf("\f");
         uint32_t identifier = permissions_capability_create();
         run("/BIN/TEST_WIN.NUN", identifier);   
+        permissions_capability_delete(identifier);
+    } else if (strcmp("fs_test", first_word) == 0) {
+        console_printf("\f");
+        uint32_t identifier = permissions_capability_create();
+        struct permissions_capability *pc = capability_for_identifier(identifier);
+//        console_printf("The allowances in the capability sent to the new process:\n");
+//        fs_print_allowances(pc->fs_allowances);
+//        while(1){}
+        run("/BIN/TEST_FS_.NUN", identifier);
         permissions_capability_delete(identifier);
     }
     /*else if () {

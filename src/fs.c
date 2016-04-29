@@ -16,8 +16,6 @@ See the file LICENSE for details.
 #define WRITE 2
 #define APPEND 1
 
-int32_t fs_security_check(const char *path);
-
 #define MAX_OS_OPEN_FILES 1024
 
 struct fs_agnostic_file open_files_table[MAX_OS_OPEN_FILES];
@@ -50,7 +48,7 @@ void fs_init_security(struct process *p) {
     }
 
     //Temporarily copy the entire list so that the in place checks work out
-    fs_copy_allowances_list(&(p->fs_allowances_list), &(p->permissions->fs_allowances));
+//    fs_copy_allowances_list(&(p->fs_allowances_list), &(p->permissions->fs_allowances));
 
 }
 
@@ -142,6 +140,7 @@ struct fs_agnostic_file *create_fs_agnostic_file(enum ata_kind ata_type, uint8_t
 }
 
 int32_t fs_open(const char *path, const char *mode) {
+    console_printf("Attempting to open %s in %s mode\n", path, mode);
     //checks both owner permissions (dummy true) and process permissions
     int32_t success = fs_security_check(path);
     if (success < 1) {
@@ -271,13 +270,15 @@ bool fs_owner_check(const char *path) {
 * allowance, only return 1 on exact match.
 */
 bool path_permitted_by_allowance(const char *path, struct fs_allowance *allowed) {
+    console_printf("Allowance being checked: %s\n", allowed->path);
     if (allowed->do_allow_below) {
         uint32_t allowed_path_len = strlen(allowed->path);
         char truncated_path[allowed_path_len + 1];
         memcpy(truncated_path, path, allowed_path_len);
         truncated_path[allowed_path_len] = '\0';
-        if (strcmp(allowed->path, truncated_path) == 0 &&
-           (path[allowed_path_len] == '/' || path[allowed_path_len] == 0)
+        console_printf("The truncated path: %s\n", truncated_path);
+        if (strcmp(allowed->path, truncated_path) == 0 && 1
+//           (path[allowed_path_len] == '/' || path[allowed_path_len] == 0)
            ) {
             // The allowance is above the requested path
             return 1;
@@ -297,6 +298,8 @@ bool path_permitted_by_allowance(const char *path, struct fs_allowance *allowed)
 }
 
 bool fs_allowance_check(const char *path) {
+    console_printf("The allowance list being checked:\n");
+    fs_print_allowances();
     struct list_node *iterator = current->fs_allowances_list.head;
     //iterate over list of allowances until we reach
     //an acceptable one. otherwise return 0;

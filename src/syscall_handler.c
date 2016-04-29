@@ -42,6 +42,10 @@ int32_t syscall_handler(uint32_t n, uint32_t a, uint32_t b, uint32_t c,
         case SYSCALL_capability_delete:
             sys_capability_delete(a);
             return 0;
+        case SYSCALL_capability_fs_add_allowance:
+            return sys_capability_fs_add_allowance(a, (const char *)b, (bool)c);
+        case SYSCALL_capability_fs_remove_allowance:
+            return sys_capability_fs_remove_allowance(a, (const char *)b);
         case SYSCALL_open:
             return sys_fs_open((const char *)a, (const char *)b);
         case SYSCALL_close:
